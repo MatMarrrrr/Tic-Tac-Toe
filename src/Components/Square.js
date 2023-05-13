@@ -3,7 +3,7 @@ import "../App.css";
 
 function Square({ val, chooseSquare }) {
   return (
-    <div className="square" onclick={chooseSquare}>
+    <div className="square" onClick={chooseSquare}>
       {val}
     </div>
   );
