@@ -43,6 +43,11 @@ body {
   background-color: goldenrod;
 }
 
+.squareImage{
+  height: 40%;
+  width: 40%;
+}
+
 .header{
   width: 500px;
   height: 100px;

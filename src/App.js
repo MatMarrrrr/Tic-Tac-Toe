@@ -26,8 +26,8 @@ function App() {
       }
   
       if (result.state !== "none") {
-        alert(`Game Finished! Winning Player: ${result.winner}`);
         setGameStarted(false);
+        alert(`Game Finished! Winning Player: ${result.winner}`);
         restartGame();
       } else {
         player === "X" ? setPlayer("O") : setPlayer("X");
@@ -96,7 +96,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header gameStarted={gameStarted}></Header>
+      <Header gameStarted={gameStarted} currentPlayer={player}></Header>
       <div className="board">
         <div className="row">
           <Square
