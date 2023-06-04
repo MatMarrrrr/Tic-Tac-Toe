@@ -2,6 +2,7 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import Square from "./Components/Square";
 import Header from "./Components/Header";
+import Modal from "./Components/Modal";
 import { Patterns } from "./Patterns";
 
 function App() {
@@ -9,6 +10,8 @@ function App() {
   const [player, setPlayer] = useState("X");
   const [result, setResult] = useState({ winner: "none", state: "none" });
   const [gameStarted, setGameStarted] = useState(false);
+  const [modalVisibility, setModalVisibility] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     checkWin();
@@ -18,22 +21,21 @@ function App() {
   }, [board]);
 
   useEffect(() => {
-    const delay = 100;
-  
+    const delay = 50;
+
     const timer = setTimeout(() => {
       if (result.state === "none") {
         checkIfTie();
       }
-  
+
       if (result.state !== "none") {
-        setGameStarted(false);
-        alert(`Game Finished! Winning Player: ${result.winner}`);
-        restartGame();
+        setModalMessage(`${result.winner} has won`);
+        setModalVisibility(true);
       } else {
         player === "X" ? setPlayer("O") : setPlayer("X");
       }
     }, delay);
-  
+
     return () => {
       clearTimeout(timer);
     };
@@ -47,14 +49,13 @@ function App() {
     setBoard(
       board.map((val, idx) => {
         if (idx === square && val === "") {
+          player === "X" ? setPlayer("O") : setPlayer("X");
           return player;
         }
 
         return val;
       })
     );
-
-    player === "X" ? setPlayer("O") : setPlayer("X");
   };
 
   const checkWin = () => {
@@ -92,11 +93,27 @@ function App() {
   const restartGame = () => {
     setBoard(["", "", "", "", "", "", "", "", ""]);
     setPlayer("X");
+    setGameStarted(false);
+  };
+
+  const closeModal = () => {
+    setModalVisibility(false);
+    setModalMessage("");
   };
 
   return (
     <div className="App">
-      <Header gameStarted={gameStarted} currentPlayer={player}></Header>
+      <Modal
+        title={modalMessage}
+        visibility={modalVisibility}
+        closeModal={closeModal}
+        restartGame={restartGame}
+      />
+
+      <h1 className="title">Tic Tac Toe</h1>
+
+      <Header gameStarted={gameStarted} currentPlayer={player} />
+
       <div className="board">
         <div className="row">
           <Square
