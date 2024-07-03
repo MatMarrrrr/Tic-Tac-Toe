@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Square from "./Components/Square";
 import Header from "./Components/Header";
 import Modal from "./Components/Modal";
@@ -13,21 +13,53 @@ function App() {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  const checkWin = useCallback(() => {
+    let foundWinningPattern = false;
+    Patterns.forEach((currPattern) => {
+      const firstPlayer = board[currPattern[0]];
+
+      if (firstPlayer === "") return;
+
+      if (currPattern.every((idx) => board[idx] === firstPlayer)) {
+        setResult({ winner: firstPlayer, state: "won" });
+        foundWinningPattern = true;
+      }
+    });
+
+    if (!foundWinningPattern && board.every((square) => square !== "")) {
+      setResult({ winner: "No One", state: "Tie" });
+    }
+  }, [board]);
+
+  const checkIfTie = useCallback(() => {
+    let filled = true;
+    board.forEach((square) => {
+      if (square === "") {
+        filled = false;
+      }
+    });
+
+    if (filled) {
+      setResult({ winner: "No One", state: "Tie" });
+      setGameStarted(false);
+    }
+  }, [board]);
+
   useEffect(() => {
     checkWin();
     if (result.state === "none") {
       checkIfTie();
     }
-  }, [board]);
+  }, [board, checkWin, checkIfTie, result.state]);
 
   useEffect(() => {
     const delay = 50;
-
+  
     const timer = setTimeout(() => {
       if (result.state === "none") {
         checkIfTie();
       }
-
+  
       if (result.state !== "none") {
         setModalMessage(`${result.winner} has won`);
         setModalVisibility(true);
@@ -35,11 +67,11 @@ function App() {
         player === "X" ? setPlayer("O") : setPlayer("X");
       }
     }, delay);
-
+  
     return () => {
       clearTimeout(timer);
     };
-  }, [result]);
+  }, [result, checkIfTie, player]);
 
   const chooseSquare = (square) => {
     if (!gameStarted) {
@@ -56,38 +88,6 @@ function App() {
         return val;
       })
     );
-  };
-
-  const checkWin = () => {
-    let foundWinningPattern = false;
-    Patterns.forEach((currPattern) => {
-      const firstPlayer = board[currPattern[0]];
-
-      if (firstPlayer === "") return;
-
-      if (currPattern.every((idx) => board[idx] === firstPlayer)) {
-        setResult({ winner: firstPlayer, state: "won" });
-        foundWinningPattern = true;
-      }
-    });
-
-    if (!foundWinningPattern && board.every((square) => square !== "")) {
-      setResult({ winner: "No One", state: "Tie" });
-    }
-  };
-
-  const checkIfTie = () => {
-    let filled = true;
-    board.forEach((square) => {
-      if (square === "") {
-        filled = false;
-      }
-    });
-
-    if (filled) {
-      setResult({ winner: "No One", state: "Tie" });
-      setGameStarted(false);
-    }
   };
 
   const restartGame = () => {
