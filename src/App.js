@@ -31,49 +31,21 @@ function App() {
     }
   }, [board]);
 
-  const checkIfTie = useCallback(() => {
-    let filled = true;
-    board.forEach((square) => {
-      if (square === "") {
-        filled = false;
-      }
-    });
-
-    if (filled) {
-      setResult({ winner: "No One", state: "Tie" });
-      setGameStarted(false);
-    }
-  }, [board]);
-
   useEffect(() => {
     checkWin();
-    if (result.state === "none") {
-      checkIfTie();
-    }
-  }, [board, checkWin, checkIfTie, result.state]);
+  }, [board, checkWin]);
 
   useEffect(() => {
-    const delay = 50;
-  
-    const timer = setTimeout(() => {
-      if (result.state === "none") {
-        checkIfTie();
-      }
-  
-      if (result.state !== "none") {
-        setModalMessage(`${result.winner} has won`);
-        setModalVisibility(true);
-      } else {
-        player === "X" ? setPlayer("O") : setPlayer("X");
-      }
-    }, delay);
-  
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [result, checkIfTie, player]);
+    if (result.state !== "none") {
+      let modalMessage =
+        result.state === "won" ? `${result.winner} has won` : `Its a Tie`;
+      setModalMessage(modalMessage);
+      setModalVisibility(true);
+    }
+  }, [result]);
 
   const chooseSquare = (square) => {
+    if (board[square] !== "" || result.state !== "none") return;
     if (!gameStarted) {
       setGameStarted(true);
     }
@@ -81,22 +53,20 @@ function App() {
     setBoard(
       board.map((val, idx) => {
         if (idx === square && val === "") {
-          player === "X" ? setPlayer("O") : setPlayer("X");
           return player;
         }
-
         return val;
       })
     );
+
+    setPlayer(player === "X" ? "O" : "X");
   };
 
   const restartGame = () => {
     setBoard(["", "", "", "", "", "", "", "", ""]);
     setPlayer("X");
+    setResult({ winner: "none", state: "none" });
     setGameStarted(false);
-  };
-
-  const closeModal = () => {
     setModalVisibility(false);
     setModalMessage("");
   };
@@ -106,8 +76,7 @@ function App() {
       <Modal
         title={modalMessage}
         visibility={modalVisibility}
-        closeModal={closeModal}
-        restartGame={restartGame}
+        closeModal={restartGame}
       />
 
       <h1 className="title">Tic Tac Toe</h1>
@@ -116,66 +85,21 @@ function App() {
 
       <div className="board">
         <div className="row">
-          <Square
-            val={board[0]}
-            chooseSquare={() => {
-              chooseSquare(0);
-            }}
-          />
-          <Square
-            val={board[1]}
-            chooseSquare={() => {
-              chooseSquare(1);
-            }}
-          />
-          <Square
-            val={board[2]}
-            chooseSquare={() => {
-              chooseSquare(2);
-            }}
-          />
+          <Square val={board[0]} chooseSquare={() => chooseSquare(0)} />
+          <Square val={board[1]} chooseSquare={() => chooseSquare(1)} />
+          <Square val={board[2]} chooseSquare={() => chooseSquare(2)} />
         </div>
 
         <div className="row">
-          <Square
-            val={board[3]}
-            chooseSquare={() => {
-              chooseSquare(3);
-            }}
-          />
-          <Square
-            val={board[4]}
-            chooseSquare={() => {
-              chooseSquare(4);
-            }}
-          />
-          <Square
-            val={board[5]}
-            chooseSquare={() => {
-              chooseSquare(5);
-            }}
-          />
+          <Square val={board[3]} chooseSquare={() => chooseSquare(3)} />
+          <Square val={board[4]} chooseSquare={() => chooseSquare(4)} />
+          <Square val={board[5]} chooseSquare={() => chooseSquare(5)} />
         </div>
 
         <div className="row">
-          <Square
-            val={board[6]}
-            chooseSquare={() => {
-              chooseSquare(6);
-            }}
-          />
-          <Square
-            val={board[7]}
-            chooseSquare={() => {
-              chooseSquare(7);
-            }}
-          />
-          <Square
-            val={board[8]}
-            chooseSquare={() => {
-              chooseSquare(8);
-            }}
-          />
+          <Square val={board[6]} chooseSquare={() => chooseSquare(6)} />
+          <Square val={board[7]} chooseSquare={() => chooseSquare(7)} />
+          <Square val={board[8]} chooseSquare={() => chooseSquare(8)} />
         </div>
       </div>
     </div>
