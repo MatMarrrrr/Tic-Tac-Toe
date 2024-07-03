@@ -1,5 +1,5 @@
 # Tic Tac Toe
-## Live version: https://tictactoe-matmar.netlify.app/
+## Live version: https://tictactoe-mm.netlify.app
 ## Used technologies
 [<img align="left" alt="React" width="36px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg">][react.js]
 [<img align="left" alt="JavaScript" width="36px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" style="padding-right:10px;"/>][js]
